@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import "../../styles/index.css";
+
+const URL_BASE = "https://playground.4geeks.com/todo";
+
+
+
 
 
 const TodoList = () => {
@@ -11,19 +16,97 @@ const TodoList = () => {
 
     const [indexActivo, setIndex] = useState(null);
 
+    const [mensaje, setMensaje] = useState('');
 
-    const eliminarTareas = (indexEliminar) => {
+
+    const cargarTareas = async()=>{
+        try {
+
+            const response = await fetch(`${URL_BASE}/users/Jorge1`);
+            if(response.status === 404){
+
+                setMensaje('Usuario no encontrado!');
+            }
+
+            const data = await response.json();
+
+            setTareas(data.todos);
 
 
-        setTareas(
 
-            tareas.filter((value, index) => index !== indexEliminar)
 
-        );
+            
+        } catch (error) {
+
+            console.log(error);
+            
+        }
+
+                
+
+
+    }
+
+
+    const agregarTarea =async()=>{
+        const response = await fetch(`${URL_BASE}/todos/Jorge1`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                "label": texto,
+                "is_done": false
+            })
+
+
+            
+        });
+
+        const data = response.json();
+
+
+
+        cargarTareas();
+
+
+
+       
+
+    }
+    const eliminarTareas = async (id) => {
+
+
+       try {
+
+        const response = await fetch(`${URL_BASE}/todos/${id}`,{
+            method : "DELETE"
+            
+        });
+
+        
+        cargarTareas();
+        
+       } catch (error) {
+
+        console.log(error);
+        
+       }
     }
 
 
 
+
+    useEffect(()=>{
+
+        cargarTareas();
+
+
+
+
+    },[]);
+    
 
 
 
@@ -40,13 +123,15 @@ const TodoList = () => {
             <div className="d-flex todo-list border flex-column " style={{ minHeight: "200px", width: "700px" }} >
 
                 <h1>TodoList</h1>
+                <h1>{mensaje}</h1>
 
                 <div className="d-flex ">
 
                     <label htmlFor="tarea"></label>
                     <input type="text" name="tarea" placeholder="QUE VAS HACER?" value={texto} onChange={(evento) => { setTexto(evento.target.value) }} onKeyDown={(event) => {
                         if (event.key === 'Enter') {
-                            setTareas([...tareas, texto]);
+                            
+                            agregarTarea();
 
                             setTexto("");
 
@@ -67,7 +152,7 @@ const TodoList = () => {
                 
 
 
-                {tareas.map((value, index) => {
+                {tareas?.map((value, index) => {
 
                     return <div
 
@@ -92,12 +177,12 @@ const TodoList = () => {
 
 
 
-                    >{value}
+                    >{ value?.label}
 
                         {indexActivo === index ? <button
                             onClick={() => {
 
-                                eliminarTareas(index);
+                                eliminarTareas(value.id);
                             }}
 
                         >X</button> : null}
@@ -110,7 +195,7 @@ const TodoList = () => {
 
                     
                 })}
-                <div className="pendientes">{tareas.length} tareas pendientes</div>
+                <div className="pendientes">{tareas?.length} tareas pendientes</div>
 
 
 
