@@ -19,11 +19,11 @@ const TodoList = () => {
     const [mensaje, setMensaje] = useState('');
 
 
-    const cargarTareas = async()=>{
+    const cargarTareas = async () => {
         try {
 
             const response = await fetch(`${URL_BASE}/users/Jorge1`);
-            if(response.status === 404){
+            if (response.status === 404) {
 
                 setMensaje('Usuario no encontrado!');
             }
@@ -35,78 +35,96 @@ const TodoList = () => {
 
 
 
-            
+
         } catch (error) {
 
             console.log(error);
-            
+
         }
 
-                
+
 
 
     }
 
 
-    const agregarTarea =async()=>{
-        const response = await fetch(`${URL_BASE}/todos/Jorge1`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-                "label": texto,
-                "is_done": false
-            })
+    const agregarTarea = async () => {
+        try {
 
 
-            
-        });
-
-        const data = response.json();
+            const response = await fetch(`${URL_BASE}/todos/Jorge1`, {
 
 
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-        cargarTareas();
+                body: JSON.stringify({
+                    "label": texto,
+                    "is_done": false
+                })
 
 
 
-       
+
+
+
+            });
+
+            const data = response.json();
+
+
+
+            cargarTareas();
+
+
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+
+
+
+
+
+
 
     }
     const eliminarTareas = async (id) => {
 
 
-       try {
+        try {
 
-        const response = await fetch(`${URL_BASE}/todos/${id}`,{
-            method : "DELETE"
-            
-        });
+            const response = await fetch(`${URL_BASE}/todos/${id}`, {
+                method: "DELETE"
 
-        
-        cargarTareas();
-        
-       } catch (error) {
+            });
 
-        console.log(error);
-        
-       }
+
+            cargarTareas();
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
     }
 
 
 
 
-    useEffect(()=>{
+    useEffect(() => {
 
         cargarTareas();
 
 
 
 
-    },[]);
-    
+    }, []);
+
 
 
 
@@ -130,7 +148,7 @@ const TodoList = () => {
                     <label htmlFor="tarea"></label>
                     <input type="text" name="tarea" placeholder="QUE VAS HACER?" value={texto} onChange={(evento) => { setTexto(evento.target.value) }} onKeyDown={(event) => {
                         if (event.key === 'Enter') {
-                            
+
                             agregarTarea();
 
                             setTexto("");
@@ -149,7 +167,7 @@ const TodoList = () => {
                 <p>{texto}</p>
 
 
-                
+
 
 
                 {tareas?.map((value, index) => {
@@ -158,11 +176,11 @@ const TodoList = () => {
 
                         key={index}
 
-                        className={`tarea d-flex justify-content-between ${indexActivo === index ? "hover" : "" }`}
+                        className={`tarea d-flex justify-content-between ${indexActivo === index ? "hover" : ""}`}
 
-                        
-                        
-                
+
+
+
 
                         onMouseEnter={() => {
                             setIndex(index);
@@ -173,11 +191,11 @@ const TodoList = () => {
                             setIndex(null);
                         }}
 
-                        
 
 
 
-                    >{ value?.label}
+
+                    >{value?.label}
 
                         {indexActivo === index ? <button
                             onClick={() => {
@@ -186,14 +204,14 @@ const TodoList = () => {
                             }}
 
                         >X</button> : null}
-                        
 
-                        
+
+
                     </div>
 
 
 
-                    
+
                 })}
                 <div className="pendientes">{tareas?.length} tareas pendientes</div>
 
@@ -203,7 +221,7 @@ const TodoList = () => {
             </div>
 
 
-            
+
 
 
 
@@ -221,7 +239,7 @@ const TodoList = () => {
 
 
 
-        
+
 
 
 
@@ -237,7 +255,7 @@ const TodoList = () => {
 
     )
 
-    
+
 }
 
 
